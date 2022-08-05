@@ -1,9 +1,0 @@
----
-# - name: gateway
-#   src: https://github.com/EAS-Kalem/network-ansible-gateway
-#   version: main
-
-- src: https://github.com/EAS-Kalem/network-ansible-gateway
-  scm: git
-  name: ansible-network-gateway
-  version: main

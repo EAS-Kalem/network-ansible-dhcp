@@ -2,6 +2,7 @@
 - name: Converge
   hosts: all
   tasks:
-    - name: "Include network.dhcp"
-      include_role:
-        name: "network.dhcp"
+  - name: "Include network.dhcp"
+    include_role:
+      name: "network.dhcp"
+       

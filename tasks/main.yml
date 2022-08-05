@@ -1,79 +1,74 @@
 ---
-- name: gateway
-  hosts: gateway
-  roles:
-    - ansible-network-gateway
-    
-- name: subscription-manager refresh
-  command: subscription-manager refresh
+  - name: subscription-manager refresh
+    command: subscription-manager refresh
 
-- name: install dhcp
-  command: yum -y install dhcp
+  - name: install dhcp
+    command: yum -y install dhcp
 
-# - name: install dhcp
-#   ansible.builtin.yum:
-#     name: dhcp
+  # - name: install dhcp
+  #   ansible.builtin.yum:
+  #     name: dhcp
 
-# - name: Echo my_env_var
-#   shell: "echo $DOMAIN_NAME"
-#   environment:
-#     DOMAIN_NAME: kalem.local
+  # - name: Echo my_env_var
+  #   shell: "echo $DOMAIN_NAME"
+  #   environment:
+  #     DOMAIN_NAME: kalem.local
 
-- name: Update DHCP conf
-  ansible.builtin.blockinfile:
-    path: /etc/dhcp/dhcpd.conf 
-    block: |
-      option domain-name "{{DOMAIN_NAME}}"; 
-      default-lease-time	86400;  
-      max-lease-time          172800; 
-      ddns-update-style none;
-      authoritative;
-      subnet 10.0.0.0 netmask 255.255.255.0 { 
-      range 10.0.0.1 10.0.0.50;  
-      option subnet-mask 255.255.255.0; 
-      option routers 10.0.0.1;   
-      option domain-name "{{DOMAIN_NAME}}";  
-      option domain-search "{{DOMAIN_NAME}}"; 
-      option domain-name-servers 10.0.0.3, 8.8.8.8, 8.8.4.4;   
-      }
-      host gateway-node {
-        hardware ethernet 00:50:56:87:12:b5;    
-        fixed-address 10.0.0.1;     
-      }
+  - name: Update DHCP conf
+    ansible.builtin.blockinfile:
+      path: /etc/dhcp/dhcpd.conf 
+      block: |
+        option domain-name "{{DOMAIN_NAME}}"; 
+        default-lease-time	86400;  
+        max-lease-time          172800; 
+        ddns-update-style none;
+        authoritative;
+        subnet 10.0.0.0 netmask 255.255.255.0 { 
+        range 10.0.0.3 10.0.0.50;  
+        option subnet-mask 255.255.255.0; 
+        option routers 10.0.0.1;   
+        option domain-name "{{DOMAIN_NAME}}";  
+        option domain-search "{{DOMAIN_NAME}}"; 
+        option domain-name-servers 10.0.0.3; 
+        }
+        host gateway-node {
+          hardware ethernet 00:50:56:87:12:b5;    
+          fixed-address 10.0.0.1;     
+        }
 
-      #   host DNS-node { 
-      #   hardware ethernet 00:20:56:87:19:b5;   
-      #   fixed-address 10.0.0.3;  
-      # }
-      
-- name: start dhcpd
-  command: systemctl start dhcpd.service
+        #   host DNS-node { 
+        #   hardware ethernet 00:20:56:87:19:b5;   
+        #   fixed-address 10.0.0.3;  
+        # }
+        
+  - name: start dhcpd
+    command: systemctl start dhcpd.service
 
-- ansible.posix.firewalld:
-    service: dhcp
-    permanent: yes
-    state: enabled
+  - ansible.posix.firewalld:
+      service: dhcp
+      permanent: yes
+      state: enabled
 
-- name: reload firewall
-  command: firewall-cmd --reload
+  - name: reload firewall
+    command: firewall-cmd --reload
 
-- name: Update ens224
-  ansible.builtin.blockinfile:
-    path: /etc/sysconfig/network-scripts/ifcfg-ens224
-    block: |
-      DEFROUTE=yes
-      GATEWAY={{ hostvars['gateway'].ansible_host }}
-      DOMAIN={{DOMAIN_NAME}}; 
-      DNS1={{{ hostvars['dns'].ansible_host }}
-           
-- name: ifdown + ifup NIC
-  command: ifdown ens224 && ifup ens224
+  - name: Update ens224
+    ansible.builtin.blockinfile:
+      path: /etc/sysconfig/network-scripts/ifcfg-ens224
+      block: |
+        DEFROUTE=yes
+        GATEWAY=10.0.0.1
+        DOMAIN={{DOMAIN_NAME}}; 
+  #  GATEWAY={{ hostvars['gateway'].ansible_host }} 
+  # DNS1={{{ hostvars['dns'].ansible_host }}         
+  - name: ifdown + ifup NIC
+    command: ifdown ens224 && ifup ens224
 
-- name: start DHCPd
-  command: systemctl start dhcpd.service
+  - name: start DHCPd
+    command: systemctl start dhcpd.service
 
-- name: add service DHCPd
-  command: firewall-cmd --add-service=dhcp --permanent
+  - name: add service DHCPd
+    command: firewall-cmd --add-service=dhcp --permanent
 
-- name: reload firewall
-  command: firewall-cmd --reload
+  - name: reload firewall
+    command: firewall-cmd --reload
