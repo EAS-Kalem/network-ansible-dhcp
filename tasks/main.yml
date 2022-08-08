@@ -72,3 +72,6 @@
 
   - name: reload firewall
     command: firewall-cmd --reload
+
+  - name: if up
+    command: ifup ens224
