@@ -1,0 +1,4 @@
+---    
+- src: https://github.com/EAS-Kalem/network-ansible-gateway.git
+  version: main
+  name: gateway
