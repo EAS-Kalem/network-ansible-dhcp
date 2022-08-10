@@ -2,11 +2,5 @@
 - name: Converge
   hosts: all
   tasks:
-  - name: "Include network.dhcp"
-    include_role:
-      name: "gateway"
-
-  - name: "Include network.dhcp"
-    include_role:
-      name: "network.dhcp"
-       
+  
+- import_playbook: ../../playbook.yml

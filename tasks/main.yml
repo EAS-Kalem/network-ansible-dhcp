@@ -9,27 +9,22 @@
   #   ansible.builtin.yum:
   #     name: dhcp
 
-  # - name: Echo my_env_var
-  #   shell: "echo $DOMAIN_NAME"
-  #   environment:
-  #     DOMAIN_NAME: kalem.local
-
   - name: Update DHCP conf
     ansible.builtin.blockinfile:
       path: /etc/dhcp/dhcpd.conf 
       block: |
         option domain-name "{{DOMAIN_NAME}}"; 
         default-lease-time	86400;  
-        max-lease-time          172800; 
+        max-lease-time 172800; 
         ddns-update-style none;
         authoritative;
-        subnet 10.0.0.0 netmask 255.255.255.0 { 
-        range 10.0.0.3 10.0.0.50;  
+        subnet 10.0.0.1 netmask 255.255.255.0 { 
+        range {{RANGE}};  
         option subnet-mask 255.255.255.0; 
         option routers 10.0.0.1;   
         option domain-name "{{DOMAIN_NAME}}";  
         option domain-search "{{DOMAIN_NAME}}"; 
-        option domain-name-servers 10.0.0.3; 
+        option domain-name-servers {{DNS}}; 
         }
         host gateway-node {
           hardware ethernet 00:50:56:87:12:b5;    

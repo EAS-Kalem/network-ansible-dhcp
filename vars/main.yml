@@ -1,2 +1,8 @@
 ---
 DOMAIN_NAME: kalem.local
+SUBNET: 10.0.0.0
+RANGE: 10.0.0.10 10.0.0.50
+DNS: 10.0.0.3
+in_interface: ens224
+out_interface: ens192
+OPTION_ROUTERS: 10.0.0.1

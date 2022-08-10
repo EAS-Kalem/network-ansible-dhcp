@@ -1,4 +1,5 @@
 ---    
-- src: https://github.com/EAS-Kalem/network-ansible-gateway.git
-  version: main
+- src: https://github.com/EAS-Kalem/network-ansible-gateway
+  scm: git
+  version: cluster
   name: gateway

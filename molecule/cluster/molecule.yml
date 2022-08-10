@@ -1,6 +1,8 @@
 ---
 dependency:
   name: galaxy
+  options:
+    role-file: requirements.yml
 driver:
   name: vmware
   vcenter_hostname: 192.168.1.100
@@ -20,7 +22,7 @@ driver:
   #winrm_server_cert_validation: ignore # is the server certificate validation mode
   # The below list is possible to define DNS nameservers
 platforms:
-  - name: dhcp # is an instance name
+  - name: kalem-dhcp # is an instance name
     template: RHEL79-Thin # is to be used as a template when cloning an instance
     #resource_pool: change me to resource pool
     #snapshot_src: change me to snapshot name # is a snapshot name to be possible specified if you want to use linked clone.
@@ -35,8 +37,8 @@ platforms:
       - name: kalem # is a port group to be assigned to an instance
         ip: 10.0.0.2
         netmask: 255.255.255.0
-    group: dhcp
-  - name: gateway # is an instance name
+    group: kalem-dhcp
+  - name: kalem-gateway # is an instance name
     template: RHEL79-Thin # is to be used as a template when cloning an instance
     #resource_pool: change me to resource pool
     #snapshot_src: change me to snapshot name # is a snapshot name to be possible specified if you want to use linked clone.
@@ -51,7 +53,7 @@ platforms:
       - name: kalem # is a port group to be assigned to an instance
         ip: 10.0.0.2
         netmask: 255.255.255.0
-    group: gateway
+    group: kalem-gateway
 provisioner:
   name: ansible
   env:
@@ -60,4 +62,3 @@ provisioner:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
 verifier:
   name: ansible
-
