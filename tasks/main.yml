@@ -18,23 +18,26 @@
         max-lease-time 172800; 
         ddns-update-style none;
         authoritative;
-        subnet 10.0.0.1 netmask 255.255.255.0 { 
+        subnet {{SUBNET}} netmask 255.255.255.0 { 
         range {{RANGE}};  
         option subnet-mask 255.255.255.0; 
-        option routers 10.0.0.1;   
+        option routers "{{OPTION_ROUTERS}}";   
         option domain-name "{{DOMAIN_NAME}}";  
         option domain-search "{{DOMAIN_NAME}}"; 
         option domain-name-servers {{DNS}}; 
         }
         host gateway-node {
-          hardware ethernet 00:50:56:87:12:b5;    
-          fixed-address 10.0.0.1;     
+          hardware ethernet {{ GW_MAC }}
+          fixed-address {{ GW_IP }};    
         }
-
-        #   host DNS-node { 
-        #   hardware ethernet 00:20:56:87:19:b5;   
-        #   fixed-address 10.0.0.3;  
-        # }
+        host dhcp-node {
+          hardware ethernet {{ DHCP_MAC }}
+          fixed-address {{ DHCP_IP }};    
+        }
+        host dns-node {
+          hardware ethernet {{ DNS_MAC }}
+          fixed-address {{ DNS_IP }};    
+        }
         
   - name: start dhcpd
     command: systemctl start dhcpd.service
@@ -49,15 +52,15 @@
 
   - name: Update ens224
     ansible.builtin.blockinfile:
-      path: /etc/sysconfig/network-scripts/ifcfg-ens224
+      path: /etc/sysconfig/network-scripts/ifcfg-{{in_interface}}
       block: |
         DEFROUTE=yes
-        GATEWAY=10.0.0.1
+        GATEWAY={{ hostvars['kalem-gateway'].ansible_ens224.ipv4.address }};
         DOMAIN={{DOMAIN_NAME}}; 
   #  GATEWAY={{ hostvars['gateway'].ansible_host }} 
   # DNS1={{{ hostvars['dns'].ansible_host }}         
   - name: ifdown + ifup NIC
-    command: ifdown ens224 && ifup ens224
+    command: ifdown {{in_interface}} && ifup {{in_interface}}
 
   - name: start DHCPd
     command: systemctl start dhcpd.service
@@ -69,4 +72,4 @@
     command: firewall-cmd --reload
 
   - name: if up
-    command: ifup ens224
+    command: ifup {{in_interface}}

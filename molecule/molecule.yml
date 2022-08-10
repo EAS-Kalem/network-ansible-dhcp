@@ -35,7 +35,7 @@ platforms:
         start_connected: true
         connected: true
       - name: kalem # is a port group to be assigned to an instance
-        ip: 10.0.0.2
+        ip: 10.0.0.6
         netmask: 255.255.255.0
     group: kalem-dhcp
   - name: kalem-gateway # is an instance name

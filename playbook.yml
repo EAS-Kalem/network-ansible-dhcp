@@ -4,12 +4,27 @@
   vars_files:
   - vars/main.yml
   
-  roles:
-    -  {  role: gateway,  when: '"kalem-gateway" in inventory_hostname' }
+  pre_tasks:
    
+  - name: Gathering Gateway Data 
+    when: "{{ 'kalem-gateway' in ansible_facts.hostname }}"
+    ansible.builtin.set_fact:
+        data:
+        ip: "{{  hostvars['kalem-gateway'].ansible_ens224.ipv4.address }}"
+        mac_address: "{{  hostvars['kalem-gateway'].ansible_ens224.macaddress }}"
+      
+  - name: Gathering DHCP Data
+    when: "{{ 'kalem-dhcp' in ansible_facts.hostname }}"
+    ansible.builtin.set_fact:
+        data:
+        ip: "{{ hostvars['kalem-dhcp'].ansible_ens224.ipv4.address }}"
+        mac_address: "{{ hostvars['kalem-dhcp'].ansible_ens224.macaddress }}"
+
   tasks:
     - name: run dhcp task file
       include_tasks: tasks/main.yml
       when: "{{ 'kalem-dhcp' in inventory_hostname }}"
 
-
+  roles:
+    -  {  role: gateway,  when: '"kalem-gateway" in inventory_hostname' }
+   
