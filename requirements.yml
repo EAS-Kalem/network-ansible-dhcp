@@ -3,3 +3,13 @@
   scm: git
   version: cluster
   name: gateway
+   
+- src: https://github.com/EAS-Kalem/network-ansible-dns
+  scm: git
+  version: cluster
+  name: dns
+
+- src: https://github.com/EAS-Kalem/network-ansible-app
+  scm: git
+  version: cluster
+  name: app
