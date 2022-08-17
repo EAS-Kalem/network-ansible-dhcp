@@ -4,16 +4,36 @@
   vars_files:
   - vars/main.yml
   
+  pre_tasks:
+    - name: list groups
+      debug:
+        msg: "{{ groups['all'] }}"
+
+    - name: var test
+      when: "{{ item in inventory_hostname }}"
+      ansible.builtin.set_fact:
+        target_url: "{{hostvars[item].groups['all'][index - 1]}}"
+      loop: "{{ groups['all'] }}"
+      loop_control:
+        index_var: index
+    
+
+    - name: Setting Hostnames
+      when: "{{ item in inventory_hostname }}"
+      ansible.builtin.set_fact:
+        groups: "{{ groups['all'] }}"
+      loop: "{{ groups['all'] }}"
+
   tasks:
     - name: run dhcp task file
       include_tasks: tasks/main.yml
-      when: "{{ 'kalem-dhcp' in inventory_hostname }}"
+      when: "{{ 'dhcp' in inventory_hostname }}"
 
-    - name: run app task file
-      include_tasks: tasks/main.yml
-      when: "'app' in group_names"
+    - name: Include the some_role role
+      include_role:
+        name: app
 
   roles:
-    -  {  role: gateway,  when: '"kalem-gateway" in inventory_hostname' }
-    -  {  role: dns,  when: '"kalem-dns" in inventory_hostname' }
+    -  {  role: gateway,  when: '"gateway" in inventory_hostname' }
+    -  {  role: dns,  when: '"dns-primary" in inventory_hostname' }
    

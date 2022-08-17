@@ -59,7 +59,7 @@
         GATEWAY={{GW_IP}};
         DOMAIN={{DOMAIN_NAME}}; 
   #  GATEWAY={{ hostvars['gateway'].ansible_host }} 
-  # DNS1={{{ hostvars['dns'].ansible_host }}         
+  # DNS1={{{ hostvars['dns-primary'].ansible_host }}         
   - name: ifdown + ifup NIC
     command: ifdown {{in_interface}} && ifup {{in_interface}}
 
