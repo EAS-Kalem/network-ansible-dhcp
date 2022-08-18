@@ -77,3 +77,6 @@
 
   - name: conn reload
     command: nmcli conn reload
+
+  - name: conn reload
+    command: route add default gw 10.0.0.1 dev vmnet0:1
