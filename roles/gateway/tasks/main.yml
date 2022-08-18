@@ -20,16 +20,16 @@
      block: |
       NETWORKING=yes 
       HOSTNAME=nat 
-      GATEWAY={{ hostvars['gateway'].ansible_host }}
-      DNS=10.0.0.2
+      GATEWAY={{ GW_IP }}
+      DNS=10.0.0.3
      create: yes
 
 - name: edit ens224
   blockinfile:
     dest:  /etc/sysconfig/network-scripts/ifcfg-ens224
     block: |
-      GATEWAY={{ hostvars['gateway'].ansible_host }}
-      DNS=10.0.0.2
+      GATEWAY={{ GW_IP }}
+      DNS=10.0.0.3
     insertafter: EOF
     create: yes
 

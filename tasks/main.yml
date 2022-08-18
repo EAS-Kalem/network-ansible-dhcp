@@ -53,13 +53,13 @@
 
   - name: Update ens224
     ansible.builtin.blockinfile:
-      path: /etc/sysconfig/network-scripts/ifcfg-{{in_interface}}
+      path: /etc/sysconfig/network-scripts/ifcfg-ens224
       block: |
         DEFROUTE=yes
         GATEWAY={{GW_IP}};
         DOMAIN={{DOMAIN_NAME}}; 
-  #  GATEWAY={{ hostvars['gateway'].ansible_host }} 
-  # DNS1={{{ hostvars['dns-primary'].ansible_host }}         
+        DNS1={{DNS_IP}};   
+             
   - name: ifdown + ifup NIC
     command: ifdown {{in_interface}} && ifup {{in_interface}}
 
@@ -74,3 +74,6 @@
 
   - name: if up
     command: ifup {{in_interface}}
+
+  - name: conn reload
+    command: nmcli conn reload
